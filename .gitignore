@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+media_pipeline.db
+uploads/
+.env
