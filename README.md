@@ -1,114 +1,58 @@
-\# Intelligent Media Processing Pipeline
+\# Intelligent Media Processing System
 
 
 
-A backend system for asynchronous image upload and intelligent media analysis.
+AI-powered image processing pipeline for:
 
 
 
-The system accepts image uploads, stores metadata, processes images asynchronously, and generates structured analysis results.
-
-
-
-\## Features
-
-
-
-\- Image upload API
-
-\- Unique processing ID for every upload
-
-\- SQLite database persistence
-
-\- Asynchronous background processing
-
-\- Processing status tracking
+\- Image quality validation
 
 \- Blur detection
 
 \- Brightness analysis
 
-\- Image dimension validation
-
-\- SHA-256 file hash generation
-
-\- Perceptual hash generation
-
 \- Duplicate image detection
 
-\- Indian vehicle number format validation structure
+\- OCR vehicle number extraction
 
-\- Screenshot/photo-of-photo heuristics
+\- Screenshot detection
 
-\- Failure handling
+\- Metadata analysis
 
-\- Structured JSON analysis results
+\- Photo-of-photo detection
 
-
-
-\## Architecture
+\- Suspicious editing heuristics
 
 
 
-```text
+\## Technologies Used
 
-Client
 
-&#x20; |
 
-&#x20; | POST /api/v1/images
+\- Python
 
-&#x20; v
+\- FastAPI
 
-FastAPI API
+\- OpenCV
 
-&#x20; |
+\- EasyOCR
 
-&#x20; | 1. Validate image
+\- SQLAlchemy
 
-&#x20; | 2. Save image locally
+\- SQLite
 
-&#x20; | 3. Store metadata in SQLite
+\- Pillow
 
-&#x20; | 4. Create processing ID
+\- NumPy
 
-&#x20; |
 
-&#x20; v
 
-Background Worker Thread
+\## How to Run
 
-&#x20; |
 
-&#x20; | status = processing
 
-&#x20; |
+```bash
 
-&#x20; +--> Blur Detection
-
-&#x20; +--> Brightness Analysis
-
-&#x20; +--> Dimension Validation
-
-&#x20; +--> SHA-256 Hash
-
-&#x20; +--> Perceptual Hash
-
-&#x20; +--> Duplicate Detection
-
-&#x20; +--> Vehicle Number Validation
-
-&#x20; +--> Screenshot Heuristics
-
-&#x20; |
-
-&#x20; v
-
-SQLite Database
-
-&#x20; |
-
-&#x20; v
-
-Results API
+python -m uvicorn main:app --reload
 
