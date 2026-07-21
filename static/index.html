@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Intelligent Media Processing Pipeline
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1e3a8a
+                );
+
+            min-height: 100vh;
+
+            color: white;
+
+        }
+
+        .container {
+
+            width: 92%;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 35px 0;
+
+        }
+
+        header {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+        }
+
+        header h1 {
+
+            font-size: 36px;
+
+            margin-bottom: 10px;
+
+        }
+
+        header p {
+
+            color: #cbd5e1;
+
+            font-size: 16px;
+
+            line-height: 1.6;
+
+        }
+
+        .card {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
+
+            border:
+
+                1px solid
+
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.20
+                );
+
+            border-radius: 20px;
+
+            padding: 28px;
+
+            backdrop-filter: blur(12px);
+
+            margin-bottom: 25px;
+
+        }
+
+        .upload-box {
+
+            border:
+
+                2px dashed
+
+                #93c5fd;
+
+            border-radius: 16px;
+
+            padding: 35px;
+
+            text-align: center;
+
+        }
+
+        .upload-box h2 {
+
+            margin-top: 0;
+
+        }
+
+        input[type="file"] {
+
+            margin: 20px 0;
+
+            padding: 12px;
+
+            width: 100%;
+
+            max-width: 550px;
+
+            background: white;
+
+            border-radius: 8px;
+
+            color: #111827;
+
+        }
+
+        button {
+
+            background: #2563eb;
+
+            border: none;
+
+            color: white;
+
+            padding: 14px 28px;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+        button:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-1px);
+
+        }
+
+        button:disabled {
+
+            background: #64748b;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+        #preview {
+
+            max-width: 100%;
+
+            max-height: 320px;
+
+            margin-top: 22px;
+
+            border-radius: 12px;
+
+            display: none;
+
+            box-shadow:
+
+                0 10px 30px
+
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.35
+                );
+
+        }
+
+        .status {
+
+            margin-top: 20px;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            background:
+
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.25
+                );
+
+            line-height: 1.7;
+
+        }
+
+        .status.success-status {
+
+            border-left:
+
+                4px solid
+
+                #22c55e;
+
+        }
+
+        .status.error-status {
+
+            border-left:
+
+                4px solid
+
+                #ef4444;
+
+        }
+
+        .status.processing-status {
+
+            border-left:
+
+                4px solid
+
+                #facc15;
+
+        }
+
+        .summary-box {
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(
+                    auto-fit,
+                    minmax(
+                        180px,
+                        1fr
+                    )
+                );
+
+            gap: 15px;
+
+            margin: 20px 0;
+
+        }
+
+        .summary-item {
+
+            background:
+
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.25
+                );
+
+            padding: 18px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+        }
+
+        .summary-item h3 {
+
+            margin: 0 0 8px;
+
+            font-size: 14px;
+
+            color: #cbd5e1;
+
+        }
+
+        .summary-value {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+        }
+
+        .result-grid {
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(
+                    auto-fit,
+                    minmax(
+                        280px,
+                        1fr
+                    )
+                );
+
+            gap: 18px;
+
+            margin-top: 20px;
+
+        }
+
+        .result-card {
+
+            background:
+
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            border:
+
+                1px solid
+
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
+
+            overflow-wrap: anywhere;
+
+        }
+
+        .result-card h3 {
+
+            margin-top: 0;
+
+            color: #93c5fd;
+
+            font-size: 18px;
+
+        }
+
+        .result-card p {
+
+            line-height: 1.6;
+
+        }
+
+        .value {
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+        }
+
+        .success {
+
+            color: #86efac;
+
+        }
+
+        .warning {
+
+            color: #fde68a;
+
+        }
+
+        .danger {
+
+            color: #fca5a5;
+
+        }
+
+        .neutral {
+
+            color: #cbd5e1;
+
+        }
+
+        .small-text {
+
+            font-size: 12px;
+
+            word-break: break-all;
+
+            color: #cbd5e1;
+
+        }
+
+        .signal {
+
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            margin: 3px;
+
+            border-radius: 6px;
+
+            background:
+
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            font-size: 12px;
+
+        }
+
+        .issue-list {
+
+            margin: 0;
+
+            padding-left: 20px;
+
+        }
+
+        .issue-list li {
+
+            margin-bottom: 6px;
+
+            color: #fca5a5;
+
+        }
+
+        details {
+
+            margin-top: 25px;
+
+            background:
+
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.20
+                );
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+        }
+
+        summary {
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+        pre {
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+
+            font-size: 12px;
+
+            color: #dbeafe;
+
+            margin-top: 15px;
+
+        }
+
+        .hidden {
+
+            display: none;
+
+        }
+
+        @media (max-width: 600px) {
+
+            header h1 {
+
+                font-size: 27px;
+
+            }
+
+            .card {
+
+                padding: 18px;
+
+            }
+
+            .upload-box {
+
+                padding: 22px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <header>
+
+        <h1>
+
+            Intelligent Media Processing Pipeline
+
+        </h1>
+
+        <p>
+
+            Upload an image and detect quality issues,
+
+            duplicates, screenshots, vehicle numbers,
+
+            metadata and possible tampering.
+
+        </p>
+
+    </header>
+
+
+    <!-- UPLOAD SECTION -->
+
+
+    <div class="card">
+
+
+        <div class="upload-box">
+
+
+            <h2>
+
+                Upload Image
+
+            </h2>
+
+
+            <p>
+
+                Supported formats: JPEG, PNG, WEBP
+
+            </p>
+
+
+            <input
+
+                type="file"
+
+                id="imageInput"
+
+                accept="image/jpeg,image/png,image/webp"
+
+            >
+
+
+            <br>
+
+
+            <button
+
+                id="uploadButton"
+
+                onclick="uploadImage()"
+
+            >
+
+                Analyze Image
+
+            </button>
+
+
+            <br>
+
+
+            <img
+
+                id="preview"
+
+                alt="Image Preview"
+
+            >
+
+
+        </div>
+
+
+        <div
+
+            id="status"
+
+            class="status"
+
+        >
+
+            Select an image to begin analysis.
+
+        </div>
+
+
+    </div>
+
+
+    <!-- RESULTS -->
+
+
+    <div
+
+        id="results"
+
+        class="card hidden"
+
+    >
+
+
+        <h2>
+
+            Analysis Results
+
+        </h2>
+
+
+        <!-- SUMMARY -->
+
+
+        <div
+
+            id="summaryBox"
+
+            class="summary-box"
+
+        >
+
+        </div>
+
+
+        <!-- DETAILED RESULTS -->
+
+
+        <div
+
+            id="resultGrid"
+
+            class="result-grid"
+
+        >
+
+        </div>
+
+
+        <!-- COMPLETE JSON -->
+
+
+        <details>
+
+
+            <summary>
+
+                View Complete JSON
+
+            </summary>
+
+
+            <pre
+
+                id="jsonResult"
+
+            ></pre>
+
+
+        </details>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const imageInput =
+
+    document.getElementById(
+
+        "imageInput"
+
+    );
+
+
+const preview =
+
+    document.getElementById(
+
+        "preview"
+
+    );
+
+
+const statusBox =
+
+    document.getElementById(
+
+        "status"
+
+    );
+
+
+const uploadButton =
+
+    document.getElementById(
+
+        "uploadButton"
+
+    );
+
+
+const resultsBox =
+
+    document.getElementById(
+
+        "results"
+
+    );
+
+
+const resultGrid =
+
+    document.getElementById(
+
+        "resultGrid"
+
+    );
+
+
+const summaryBox =
+
+    document.getElementById(
+
+        "summaryBox"
+
+    );
+
+
+const jsonResult =
+
+    document.getElementById(
+
+        "jsonResult"
+
+    );
+
+
+// ============================================================
+// IMAGE PREVIEW
+// ============================================================
+
+
+imageInput.addEventListener(
+
+    "change",
+
+    function () {
+
+        const file =
+
+            imageInput.files[0];
+
+        if (!file) {
+
+            preview.style.display =
+
+                "none";
+
+            return;
+
+        }
+
+        preview.src =
+
+            URL.createObjectURL(
+
+                file
+
+            );
+
+        preview.style.display =
+
+            "block";
+
+        statusBox.className =
+
+            "status";
+
+        statusBox.innerHTML =
+
+            `Selected file:
+
+            <strong>
+
+                ${escapeHtml(file.name)}
+
+            </strong>`;
+
+    }
+
+);
+
+
+// ============================================================
+// UPLOAD IMAGE
+// ============================================================
+
+
+async function uploadImage() {
+
+    const file =
+
+        imageInput.files[0];
+
+    if (!file) {
+
+        alert(
+
+            "Please select an image first."
+
+        );
+
+        return;
+
+    }
+
+    uploadButton.disabled =
+
+        true;
+
+    resultsBox.classList.add(
+
+        "hidden"
+
+    );
+
+    statusBox.className =
+
+        "status processing-status";
+
+    statusBox.innerHTML =
+
+        "Uploading image...";
+
+    const formData =
+
+        new FormData();
+
+    formData.append(
+
+        "file",
+
+        file
+
+    );
+
+    try {
+
+        const uploadResponse =
+
+            await fetch(
+
+                "/api/v1/images",
+
+                {
+
+                    method: "POST",
+
+                    body: formData
+
+                }
+
+            );
+
+        const uploadData =
+
+            await uploadResponse.json();
+
+        if (!uploadResponse.ok) {
+
+            throw new Error(
+
+                uploadData.detail
+
+                ||
+
+                "Upload failed"
+
+            );
+
+        }
+
+        const processingId =
+
+            uploadData.processing_id;
+
+        statusBox.innerHTML =
+
+            `
+
+            <strong>
+
+                Image uploaded successfully.
+
+            </strong>
+
+            <br>
+
+            Processing ID:
+
+            <span class="small-text">
+
+                ${processingId}
+
+            </span>
+
+            <br><br>
+
+            Analyzing image...
+
+            `;
+
+        await checkStatus(
+
+            processingId
+
+        );
+
+    }
+
+    catch (error) {
+
+        statusBox.className =
+
+            "status error-status";
+
+        statusBox.innerHTML =
+
+            `
+
+            <strong>
+
+                Error:
+
+            </strong>
+
+            ${escapeHtml(error.message)}
+
+            `;
+
+        uploadButton.disabled =
+
+            false;
+
+    }
+
+}
+
+
+// ============================================================
+// CHECK PROCESSING STATUS
+// ============================================================
+
+
+async function checkStatus(
+
+    processingId
+
+) {
+
+    try {
+
+        const statusResponse =
+
+            await fetch(
+
+                `/api/v1/images/${processingId}/status`
+
+            );
+
+        const statusData =
+
+            await statusResponse.json();
+
+        if (
+
+            statusData.status ===
+
+            "pending"
+
+            ||
+
+            statusData.status ===
+
+            "processing"
+
+        ) {
+
+            statusBox.className =
+
+                "status processing-status";
+
+            statusBox.innerHTML =
+
+                `
+
+                Status:
+
+                <strong>
+
+                    ${statusData.status}
+
+                </strong>
+
+                <br>
+
+                Please wait...
+
+                `;
+
+            setTimeout(
+
+                () => checkStatus(
+
+                    processingId
+
+                ),
+
+                1000
+
+            );
+
+            return;
+
+        }
+
+        if (
+
+            statusData.status ===
+
+            "failed"
+
+        ) {
+
+            throw new Error(
+
+                statusData.error
+
+                ||
+
+                "Processing failed"
+
+            );
+
+        }
+
+        const resultResponse =
+
+            await fetch(
+
+                `/api/v1/images/${processingId}/results`
+
+            );
+
+        const resultData =
+
+            await resultResponse.json();
+
+        displayResults(
+
+            resultData
+
+        );
+
+        statusBox.className =
+
+            "status success-status";
+
+        statusBox.innerHTML =
+
+            `
+
+            <strong>
+
+                Analysis completed successfully.
+
+            </strong>
+
+            `;
+
+        uploadButton.disabled =
+
+            false;
+
+    }
+
+    catch (error) {
+
+        statusBox.className =
+
+            "status error-status";
+
+        statusBox.innerHTML =
+
+            `
+
+            <strong>
+
+                Processing Error:
+
+            </strong>
+
+            ${escapeHtml(error.message)}
+
+            `;
+
+        uploadButton.disabled =
+
+            false;
+
+    }
+
+}
+
+
+// ============================================================
+// DISPLAY RESULTS
+// ============================================================
+
+
+function displayResults(
+
+    data
+
+) {
+
+    const analysis =
+
+        data.analysis;
+
+    if (!analysis) {
+
+        return;
+
+    }
+
+    resultsBox.classList.remove(
+
+        "hidden"
+
+    );
+
+    resultGrid.innerHTML = "";
+
+    summaryBox.innerHTML = "";
+
+    const issues =
+
+        analysis.summary
+
+        &&
+
+        analysis.summary.issues_detected
+
+        ?
+
+        analysis.summary.issues_detected
+
+        :
+
+        [];
+
+    const totalChecks =
+
+        analysis.summary
+
+        &&
+
+        analysis.summary.total_checks
+
+        ?
+
+        analysis.summary.total_checks
+
+        :
+
+        11;
+
+    summaryBox.innerHTML = `
+
+        <div class="summary-item">
+
+            <h3>
+
+                Total Checks
+
+            </h3>
+
+            <div class="summary-value">
+
+                ${totalChecks}
+
+            </div>
+
+        </div>
+
+        <div class="summary-item">
+
+            <h3>
+
+                Issues Detected
+
+            </h3>
+
+            <div
+
+                class="summary-value
+
+                ${
+
+                    issues.length
+
+                    ? "danger"
+
+                    : "success"
+
+                }"
+
+            >
+
+                ${issues.length}
+
+            </div>
+
+        </div>
+
+        <div class="summary-item">
+
+            <h3>
+
+                Overall Status
+
+            </h3>
+
+            <div
+
+                class="summary-value
+
+                ${
+
+                    issues.length
+
+                    ? "warning"
+
+                    : "success"
+
+                }"
+
+            >
+
+                ${
+
+                    issues.length
+
+                    ? "Review"
+
+                    : "Passed"
+
+                }
+
+            </div>
+
+        </div>
+
+        <div class="summary-item">
+
+            <h3>
+
+                Image Status
+
+            </h3>
+
+            <div class="summary-value">
+
+                ${
+
+                    analysis.dimensions.valid
+
+                    ? "Valid"
+
+                    : "Invalid"
+
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // ISSUE SUMMARY
+    // ========================================================
+
+    if (issues.length > 0) {
+
+        resultGrid.innerHTML += `
+
+            <div class="result-card">
+
+                <h3>
+
+                    Detected Issues
+
+                </h3>
+
+                <ul class="issue-list">
+
+                    ${
+
+                        issues
+
+                        .map(
+
+                            issue =>
+
+                                `<li>
+
+                                    ${escapeHtml(issue)}
+
+                                </li>`
+
+                        )
+
+                        .join("")
+
+                    }
+
+                </ul>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // ========================================================
+    // 1. BLUR DETECTION
+    // ========================================================
+
+    const blur =
+
+        analysis.blur;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                Blur Detection
+
+            </h3>
+
+            <p>
+
+                Status:
+
+                <span class="${
+
+                    blur.detected
+
+                    ? "danger"
+
+                    : "success"
+
+                }">
+
+                    ${
+
+                        blur.detected
+
+                        ? "Blurry"
+
+                        : "Clear"
+
+                    }
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Laplacian Variance:
+
+                <span class="value">
+
+                    ${blur.laplacian_variance}
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Threshold:
+
+                ${blur.threshold}
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 2. BRIGHTNESS
+    // ========================================================
+
+    const brightness =
+
+        analysis.brightness;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                Brightness Analysis
+
+            </h3>
+
+            <p>
+
+                Issue:
+
+                <span class="value">
+
+                    ${brightness.issue}
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Mean Brightness:
+
+                <span class="value">
+
+                    ${brightness.mean_brightness}
+
+                </span>
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 3. DIMENSIONS
+    // ========================================================
+
+    const dimensions =
+
+        analysis.dimensions;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                Dimension Validation
+
+            </h3>
+
+            <p>
+
+                Size:
+
+                <span class="value">
+
+                    ${dimensions.width}
+
+                    ×
+
+                    ${dimensions.height}
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Valid:
+
+                <span class="${
+
+                    dimensions.valid
+
+                    ? "success"
+
+                    : "danger"
+
+                }">
+
+                    ${
+
+                        dimensions.valid
+
+                        ? "Yes"
+
+                        : "No"
+
+                    }
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Issue:
+
+                ${escapeHtml(
+
+                    dimensions.issue
+
+                    || "None"
+
+                )}
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 4. DUPLICATE DETECTION
+    // ========================================================
+
+    const duplicate =
+
+        analysis.duplicate;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                Duplicate Detection
+
+            </h3>
+
+            <p>
+
+                Duplicate:
+
+                <span class="${
+
+                    duplicate.is_duplicate
+
+                    ? "danger"
+
+                    : "success"
+
+                }">
+
+                    ${
+
+                        duplicate.is_duplicate
+
+                        ? "Yes"
+
+                        : "No"
+
+                    }
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Type:
+
+                ${escapeHtml(
+
+                    duplicate.duplicate_type
+
+                    || "None"
+
+                )}
+
+            </p>
+
+            <p>
+
+                Matched ID:
+
+                <span class="small-text">
+
+                    ${escapeHtml(
+
+                        duplicate.matched_processing_id
+
+                        || "None"
+
+                    )}
+
+                </span>
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 5. OCR VEHICLE NUMBER
+    // ========================================================
+
+    const vehicle =
+
+        analysis.vehicle_number;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                OCR Vehicle Number
+
+            </h3>
+
+            <p>
+
+                Detected Vehicle Number:
+
+            </p>
+
+            <p class="value ${
+
+                vehicle.valid_format
+
+                ? "success"
+
+                : "warning"
+
+            }">
+
+                ${
+
+                    vehicle.text
+
+                    ?
+
+                    escapeHtml(
+
+                        vehicle.text
+
+                    )
+
+                    :
+
+                    "No valid vehicle number detected"
+
+                }
+
+            </p>
+
+            <p>
+
+                Valid Format:
+
+                <span class="${
+
+                    vehicle.valid_format
+
+                    ? "success"
+
+                    : "warning"
+
+                }">
+
+                    ${
+
+                        vehicle.valid_format
+
+                        ? "Yes"
+
+                        : "Not Detected"
+
+                    }
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Source:
+
+                ${escapeHtml(
+
+                    vehicle.source
+
+                    || "OCR"
+
+                )}
+
+            </p>
+
+            <p>
+
+                Reason:
+
+                ${escapeHtml(
+
+                    vehicle.reason
+
+                    || "None"
+
+                )}
+
+            </p>
+
+            <p>
+
+                Raw OCR Text:
+
+            </p>
+
+            <p class="small-text">
+
+                ${
+
+                    vehicle.raw_text
+
+                    ?
+
+                    escapeHtml(
+
+                        vehicle.raw_text
+
+                    )
+
+                    :
+
+                    "No OCR text detected"
+
+                }
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 6. SCREENSHOT DETECTION
+    // ========================================================
+
+    const screenshot =
+
+        analysis.screenshot_analysis;
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                Screenshot Detection
+
+            </h3>
+
+            <p>
+
+                Likelihood:
+
+                <span class="value">
+
+                    ${
+
+                        screenshot.screenshot_likelihood
+
+                        * 100
+
+                    }%
+
+                </span>
+
+            </p>
+
+            <p>
+
+                Signals:
+
+            </p>
+
+            <div>
+
+                ${
+
+                    screenshot.signals.length
+
+                    ?
+
+                    screenshot.signals
+
+                    .map(
+
+                        signal =>
+
+                            `<span class="signal">
+
+                                ${escapeHtml(signal)}
+
+                            </span>`
+
+                    )
+
+                    .join("")
+
+                    :
+
+                    "None"
+
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // 7. PHOTO-OF-PHOTO
+    // ========================================================
+
+    const photoOfPhoto =
+
+        analysis.photo_of_photo_analysis;
+
+    if (photoOfPhoto) {
+
+        resultGrid.innerHTML += `
+
+            <div class="result-card">
+
+                <h3>
+
+                    Photo-of-Photo Detection
+
+                </h3>
+
+                <p>
+
+                    Suspicious:
+
+                    <span class="${
+
+                        photoOfPhoto.suspicious
+
+                        ? "danger"
+
+                        : "success"
+
+                    }">
+
+                        ${
+
+                            photoOfPhoto.suspicious
+
+                            ? "Yes"
+
+                            : "No"
+
+                        }
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Likelihood:
+
+                    <span class="value">
+
+                        ${
+
+                            photoOfPhoto
+
+                            .photo_of_photo_likelihood
+
+                            * 100
+
+                        }%
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Signals:
+
+                </p>
+
+                <div>
+
+                    ${
+
+                        photoOfPhoto.signals.length
+
+                        ?
+
+                        photoOfPhoto.signals
+
+                        .map(
+
+                            signal =>
+
+                                `<span class="signal">
+
+                                    ${escapeHtml(signal)}
+
+                                </span>`
+
+                        )
+
+                        .join("")
+
+                        :
+
+                        "None"
+
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // ========================================================
+    // 8. METADATA ANALYSIS
+    // ========================================================
+
+    const metadata =
+
+        analysis.metadata_analysis;
+
+    if (metadata) {
+
+        const metadataCount =
+
+            metadata.metadata
+
+            ?
+
+            Object.keys(
+
+                metadata.metadata
+
+            ).length
+
+            :
+
+            0;
+
+        resultGrid.innerHTML += `
+
+            <div class="result-card">
+
+                <h3>
+
+                    Metadata Analysis
+
+                </h3>
+
+                <p>
+
+                    Metadata:
+
+                    <span class="${
+
+                        metadata.has_exif
+
+                        ? "success"
+
+                        : "warning"
+
+                    }">
+
+                        ${
+
+                            metadata.has_exif
+
+                            ? "Available"
+
+                            : "None"
+
+                        }
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Metadata Count:
+
+                    <span class="value">
+
+                        ${metadataCount}
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Software:
+
+                    ${escapeHtml(
+
+                        metadata.software
+
+                        || "None"
+
+                    )}
+
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // ========================================================
+    // 9. SUSPICIOUS EDITING
+    // ========================================================
+
+    const editing =
+
+        analysis.editing_analysis;
+
+    if (editing) {
+
+        resultGrid.innerHTML += `
+
+            <div class="result-card">
+
+                <h3>
+
+                    Suspicious Editing
+
+                </h3>
+
+                <p>
+
+                    Suspicious:
+
+                    <span class="${
+
+                        editing.suspicious
+
+                        ? "danger"
+
+                        : "success"
+
+                    }">
+
+                        ${
+
+                            editing.suspicious
+
+                            ? "Yes"
+
+                            : "No"
+
+                        }
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Suspicion Score:
+
+                    <span class="value">
+
+                        ${editing.suspicion_score}
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    Signals:
+
+                </p>
+
+                <div>
+
+                    ${
+
+                        editing.signals.length
+
+                        ?
+
+                        editing.signals
+
+                        .map(
+
+                            signal =>
+
+                                `<span class="signal">
+
+                                    ${escapeHtml(signal)}
+
+                                </span>`
+
+                        )
+
+                        .join("")
+
+                        :
+
+                        "None"
+
+                    }
+
+                </div>
+
+                <p class="small-text">
+
+                    ${escapeHtml(
+
+                        editing.note
+
+                        || ""
+
+                    )}
+
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // ========================================================
+    // 10. FILE INTEGRITY
+    // ========================================================
+
+    resultGrid.innerHTML += `
+
+        <div class="result-card">
+
+            <h3>
+
+                File Integrity
+
+            </h3>
+
+            <p>
+
+                SHA-256:
+
+            </p>
+
+            <p class="small-text">
+
+                ${escapeHtml(
+
+                    analysis.file_hash
+
+                    || "Not available"
+
+                )}
+
+            </p>
+
+            <p>
+
+                Perceptual Hash:
+
+            </p>
+
+            <p class="small-text">
+
+                ${escapeHtml(
+
+                    analysis.perceptual_hash
+
+                    || "Not available"
+
+                )}
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    // ========================================================
+    // COMPLETE JSON
+    // ========================================================
+
+    jsonResult.textContent =
+
+        JSON.stringify(
+
+            data,
+
+            null,
+
+            2
+
+        );
+
+}
+
+
+// ============================================================
+// SECURITY HELPER
+// ============================================================
+
+
+function escapeHtml(
+
+    value
+
+) {
+
+    if (
+
+        value ===
+
+        null
+
+        ||
+
+        value ===
+
+        undefined
+
+    ) {
+
+        return "";
+
+    }
+
+    return String(
+
+        value
+
+    )
+
+    .replace(
+
+        /&/g,
+
+        "&amp;"
+
+    )
+
+    .replace(
+
+        /</g,
+
+        "&lt;"
+
+    )
+
+    .replace(
+
+        />/g,
+
+        "&gt;"
+
+    )
+
+    .replace(
+
+        /"/g,
+
+        "&quot;"
+
+    )
+
+    .replace(
+
+        /'/g,
+
+        "&#039;"
+
+    );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
